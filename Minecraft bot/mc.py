@@ -6,23 +6,24 @@ from tkinter import ttk
 from tkinter.messagebox import showinfo
 import os
 
-Staff = False
-counter = 0
-laatstelijn = ""
-eenelaatstelijn = ""
+logs = open(os.getenv('APPDATA') + r'\.minecraft\logs\latest.log', 'r')
+BendeVanEllende = ["[Helper]", "[Mod]", "[Owner]", "[Dev]", "[Sr.Mod]", "[CM]"]
 Staffmode = False
 Msgmode = False
-
-BendeVanEllende = ["[Helper]", "[Mod]", "[Owner]", "[Dev]", "[Sr.Mod]", "[CM]"]
-Replys = ['Nee, ik ben er gewoon.']
-Detect = ['Ben jij aan het afk vissen ofzo?']
-logs = open(os.getenv('APPDATA') + r'\.minecraft\logs\latest.log', 'r')
+Staff = False
+laatstelijn = ""
+eenelaatstelijn = ""
+Replys = ['Zet hier in ieder geval iets neer om bugs te voorkomen. (clear dit bericht met de clear knop)  X']
+Detect = ['Zet hier in ieder geval iets neer om bugs te voorkomen. (clear dit bericht met de clear knop)  X']
+counter = 0
+username = "SweanS"
+# [00:11:43] [main/INFO]: [CHAT] [FoxGoddess] Tanivi -> (you): hello
 
 
 def checkmessage():
     global Staff
-    for a in range(len(Detect)):
-        if Detect[a].lower() in laatstelijn.lower():
+    for item in Detect:
+        if item.lower() in laatstelijn.lower():
             Staff = True
 
 
@@ -32,32 +33,48 @@ def detector():
     logs.seek(0)
     laatstelijn = (logs.readlines()[-1])
 
-    if laatstelijn != eenelaatstelijn and '/r' not in laatstelijn:
-        if Staffmode and Msgmode:
-            for member in BendeVanEllende:
-                if member in laatstelijn and '-->' in laatstelijn:
+    if '[CHAT]' in laatstelijn:
+        laatstelijn = laatstelijn[30:len(laatstelijn)]
+        index = 0
+        self_send = False
+
+        for letter in laatstelijn:
+            index += 1
+            if letter == ':':
+                self_send = True
+                break
+        if not self_send:
+            index = 0
+
+        if username not in laatstelijn[0:index]:
+            if Staffmode and Msgmode:
+                for Member in BendeVanEllende:
+                    if Member in laatstelijn and '-> (you)' in laatstelijn:
+                        checkmessage()
+            elif Staffmode:
+                for Member2 in BendeVanEllende:
+                    if Member2 in laatstelijn:
+                        checkmessage()
+            elif Msgmode:
+                if '-> (you)' in laatstelijn:
                     checkmessage()
-        elif Msgmode:
-            if '-->' in laatstelijn:
+            else:
                 checkmessage()
-        elif Staffmode:
-            for member in BendeVanEllende:
-                if member in laatstelijn:
-                    checkmessage()
-        else:
-            checkmessage()
 
-        if Staff:
-            print('Admin detected!')
-            keyboard.press('t')
-            time.sleep(0.1)
-            keyboard.release('t')
-            keyboard.write('/r ' + Replys[(random.randrange(-1, len(Replys)))])
-            time.sleep(random.randrange(1,5))
-            keyboard.press_and_release('enter')
-            Staff = False
 
-    window.after(10, detector)
+
+    if Staff:
+        time.sleep(2)
+        print('Admin detected!')
+        keyboard.press('t')
+        time.sleep(0.1)
+        keyboard.release('t')
+        keyboard.write(Replys[(random.randrange(-1, len(Replys)))])
+        time.sleep(random.randrange(7, 10))
+        keyboard.press_and_release('enter')
+        Staff = False
+
+    window.after(200, detector)
 
 
 window = tk.Tk()
@@ -83,6 +100,15 @@ def toevoegen():
         Replys.append(input2.get())
     else:
         Detect.append(input2.get())
+    combocheck()
+
+
+def clear():
+    global Detect, Replys
+    if input1.get() == 'Replys':
+        Replys = []
+    else:
+        Detect = []
     combocheck()
 
 
@@ -133,6 +159,9 @@ button1.grid(row=3, column=0, ipadx=39, ipady=10, columnspan=2, pady=20)
 huidigelijst = tk.StringVar()
 label2 = tk.Label(frame2, textvariable=huidigelijst, width=1, anchor="nw", wraplengt=265, height=1, font='Arial 12')
 label2.grid(row=4, column=0, ipadx=125, ipady=160, pady=0, columnspan=2)
+
+button2 = tk.Button(frame2, text='X', bg='#A9A9A9', command=clear, font='Arial 12 bold', fg='red')
+button2.grid(row=5, column=0, ipadx=20, ipady=1, columnspan=2)
 
 
 combocheck()
