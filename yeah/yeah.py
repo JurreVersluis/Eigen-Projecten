@@ -10,18 +10,45 @@ import win32gui
 
 window = tk.Tk()
 
+x = 0
+y = 400
+
 window.title('Robs afk fishing paneel.')
 window.geometry("400x400")
 window.configure(bg='grey')
 
-def disco():
-   window.config(bg=random.choice(["white", "black", "red", "green", "blue", "cyan", "yellow", "magenta"]))
-   window.after(1, disco)
+label1 = tk.Label(window, bg='black')
+label1.place(x=0, y=400, width=200,height=200)
+
+def w(t=None):
+    global y
+    global x
+    y -= 5
+    label1.place(x=x, y=y)
+
+def a(t=None):
+    global y
+    global x
+    x -= 5
+    label1.place(x=x, y=y)
+
+def s(t=None):
+    global y
+    global x
+    y += 5
+    label1.place(x=x, y=y)
 
 
+def d(t=None):
+    global y
+    global x
+    x += 5
+    label1.place(x=x, y=y)
 
 
-button1 = tk.Button(window, text='Disco!', bg='#A9A9A9', command=disco, font='Arial 12 bold')
-button1.place(relx=0.5, rely=0.5, anchor='center')
+window.bind('w', w)
+window.bind('a', a)
+window.bind('s', s)
+window.bind('d', d)
 
 window.mainloop()
