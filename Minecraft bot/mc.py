@@ -15,8 +15,11 @@ laatstelijn = ""
 eenelaatstelijn = ""
 Replys = ['Zet hier in ieder geval iets neer om bugs te voorkomen. (clear dit bericht met de clear knop)  X']
 Detect = ['Zet hier in ieder geval iets neer om bugs te voorkomen. (clear dit bericht met de clear knop)  X']
+gedetect = []
 counter = 0
+counter2 = 0
 username = "SweanS"
+
 # [00:11:43] [main/INFO]: [CHAT] [FoxGoddess] Tanivi -> (you): hello
 
 
@@ -28,7 +31,7 @@ def checkmessage():
 
 
 def detector():
-    global laatstelijn, eenelaatstelijn, Staff
+    global laatstelijn, eenelaatstelijn, Staff, counter2
 
     logs.seek(0)
     laatstelijn = (logs.readlines()[-1])
@@ -41,6 +44,7 @@ def detector():
         for letter in laatstelijn:
             index += 1
             if letter == ':':
+                # : voor fox, > voor normal
                 self_send = True
                 break
         if not self_send:
@@ -62,7 +66,6 @@ def detector():
                 checkmessage()
 
 
-
     if Staff:
         time.sleep(2)
         print('Admin detected!')
@@ -72,6 +75,9 @@ def detector():
         keyboard.write(Replys[(random.randrange(-1, len(Replys)))])
         time.sleep(random.randrange(7, 10))
         keyboard.press_and_release('enter')
+        counter2 += 1
+        gedetect.append(str(counter2) + laatstelijn)
+        combocheck()
         Staff = False
 
     window.after(200, detector)
@@ -98,15 +104,20 @@ def toevoegen():
     global Replys, Detect
     if input1.get() == 'Replys':
         Replys.append(input2.get())
+    elif input1.get() == 'Gedetecteerd':
+        gedetect.append(input2.get())
     else:
         Detect.append(input2.get())
+
     combocheck()
 
 
 def clear():
-    global Detect, Replys
+    global Detect, Replys, gedetect
     if input1.get() == 'Replys':
         Replys = []
+    elif input1.get() == 'Gedetecteerd':
+        gedetect = []
     else:
         Detect = []
     combocheck()
@@ -116,6 +127,8 @@ def combocheck(event=None):
     frame2.focus()
     if input1.get() == 'Replys':
         huidigelijst.set('  -  '.join(Replys))
+    elif input1.get() == 'Gedetecteerd':
+        huidigelijst.set('  -  '.join(gedetect))
     else:
         huidigelijst.set('  -  '.join(Detect))
 
@@ -144,7 +157,7 @@ input1.set('Replys')
 combobox1 = ttk.Combobox(frame2, textvariable=input1)
 combobox1.grid(row=1, column=0, ipadx=30, ipady=10, pady=35, columnspan=2)
 combobox1['state'] = 'readonly'
-combobox1['values'] = ["Detect-Message's", 'Replys']
+combobox1['values'] = ["Detect-Message's", 'Replys', "Gedetecteerd"]
 combobox1.bind('<<ComboboxSelected>>', combocheck)
 
 
