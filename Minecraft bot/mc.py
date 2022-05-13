@@ -5,6 +5,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 import os
+from datetime import datetime
+from tkinter import *
 
 logs = open(os.getenv('APPDATA') + r'\.minecraft\logs\latest.log', 'r')
 BendeVanEllende = ["[Helper]", "[Mod]", "[Owner]", "[Dev]", "[Sr.Mod]", "[CM]"]
@@ -43,7 +45,7 @@ def detector():
 
         for letter in laatstelijn:
             index += 1
-            if letter == ':':
+            if letter == '^^':
                 # : voor fox, > voor normal
                 self_send = True
                 break
@@ -65,18 +67,20 @@ def detector():
             else:
                 checkmessage()
 
-
     if Staff:
         time.sleep(2)
         print('Admin detected!')
         keyboard.press('t')
         time.sleep(0.1)
         keyboard.release('t')
-        keyboard.write(Replys[(random.randrange(-1, len(Replys)))])
+        bericht = Replys[(random.randrange(-1, len(Replys)))]
+        keyboard.write(bericht)
         time.sleep(random.randrange(7, 10))
         keyboard.press_and_release('enter')
         counter2 += 1
-        gedetect.append(str(counter2) + laatstelijn)
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        gedetect.append(f'{str(counter2)} ---- {current_time} - {laatstelijn} - Teruggestuurd: {bericht} ---')
         combocheck()
         Staff = False
 
@@ -170,8 +174,12 @@ button1.grid(row=3, column=0, ipadx=39, ipady=10, columnspan=2, pady=20)
 
 
 huidigelijst = tk.StringVar()
-label2 = tk.Label(frame2, textvariable=huidigelijst, width=1, anchor="nw", wraplengt=265, height=1, font='Arial 12')
+label2 = tk.Label(frame2, textvariable=huidigelijst, width=1, anchor="nw", wraplengt=265, height=1, font='Arial 9')
 label2.grid(row=4, column=0, ipadx=125, ipady=160, pady=0, columnspan=2)
+
+scroll_bar = tk.Scrollbar(label2)
+scroll_bar.pack(side=tk.RIGHT, fill =tk.Y)
+
 
 button2 = tk.Button(frame2, text='X', bg='#A9A9A9', command=clear, font='Arial 12 bold', fg='red')
 button2.grid(row=5, column=0, ipadx=20, ipady=1, columnspan=2)
